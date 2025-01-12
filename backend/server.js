@@ -6,7 +6,7 @@ const cors = require("cors");
 const fs = require("fs");
 
 const app = express();
-const port = 3001;
+const port = 6969;
 
 const userRoutes = require("./routes/user");
 // const videoRoutes = require("./routes/video");
@@ -17,7 +17,6 @@ app.use(
         origin: "*",
         methods: ["GET", "POST", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true,
         preflightContinue: false,
         optionsSuccessStatus: 204,
     })
