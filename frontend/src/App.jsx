@@ -9,7 +9,7 @@ import {
 import Clock from "./components/Clock";
 import ProgressBar from "./components/ProgressBar";
 import InputModal from "./modal/InputModal";
-import LibraryModal from "./modal/librarymodal";
+import LibraryModal from "./modal/LibraryModal";
 import Navbar from "./components/NavBar";
 import Header from "./components/Header";
 import BloomScroll from "./BloomScroll";
