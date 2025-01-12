@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Leaf } from "lucide-react";
+import { Home, Leaf, User } from "lucide-react";
 
 function Navbar() {
     const location = useLocation();
@@ -30,6 +30,19 @@ function Navbar() {
                     >
                         <Leaf size={20} className="mb-1" />
                         BloomScroll
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        to="/profile"
+                        className={`flex flex-col items-center hover:text-[#ffb5aa] transition-colors ${
+                            location.pathname.startsWith("/profile")
+                                ? "text-[#ffb5aa]"
+                                : ""
+                        }`}
+                    >
+                        <User size={20} className="mb-1" />
+                        Profile
                     </Link>
                 </li>
             </ul>

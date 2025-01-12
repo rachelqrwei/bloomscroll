@@ -16,7 +16,7 @@ function LibraryModal({ onClose }) {
             onClick={() => onClose()}
         >
             <div
-                className="bg-[#e7dfd8] rounded-t-2xl w-full max-w-md max-h-[65vh] overflow-y-auto"
+                className="bg-[#e7dfd8] rounded-t-2xl w-full max-w-md h-[560px] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="p-6">

@@ -5,10 +5,10 @@ import BloomPetal from "./BloomPetal";
 
 function BloomScroll() {
     const { prompt } = useParams();
-    const [videoUrls, setVideoUrls] = useState([
-        "http://172.18.78.197:3001/videos/how_to_sleep_1736658573062.mp4",
-        "http://172.18.78.197:3001/videos/default_1736662432850.mp4",
-        "http://172.18.78.197:3001/videos/how_to_make_money_1736658244069.mp4",
+    const [videoNames, setVideoNames] = useState([
+        "how_to_sleep_1736658573062.mp4",
+        "default_1736662432850.mp4",
+        "how_to_make_money_1736658244069.mp4",
         ,
     ]);
 
@@ -41,7 +41,7 @@ function BloomScroll() {
                 );
                 const data1 = await response1.json();
                 console.log("Success:", data1);
-                setVideoUrls((prev) => [...prev, data1.videoUrls[0]]);
+                setVideoNames((prev) => [...prev, data1.videoUrls[0]]);
 
                 const response2 = await fetch(
                     "http://172.18.78.197:3001/generate-video",
@@ -56,7 +56,7 @@ function BloomScroll() {
                 );
                 const data2 = await response2.json();
                 console.log("Success:", data2);
-                setVideoUrls((prev) => [...prev, data2.videoUrls[0]]);
+                setVideoNames((prev) => [...prev, data2.videoUrls[0]]);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -80,7 +80,7 @@ function BloomScroll() {
                         const index = videoRefs.current.indexOf(entry.target);
                         if (entry.isIntersecting && index !== -1) {
                             // Only set visible video if it's not the last one and it's 50% visible
-                            if (index !== videoUrls.length - 1) {
+                            if (index !== videoNames.length - 1) {
                                 console.log("Active Index:", index);
                                 setVisibleVideoIndex(index);
                             }
@@ -108,7 +108,7 @@ function BloomScroll() {
         } else {
             window.onload = handleLoad;
         }
-    }, [videoUrls]); // Dependency on videoUrls to ensure the observer is set up correctly after URLs are updated
+    }, [videoNames]); // Dependency on videoNames to ensure the observer is set up correctly after names are updated
 
     useEffect(() => {
         // Pause all videos except the visible one
@@ -166,7 +166,7 @@ function BloomScroll() {
 
     return (
         <div className="z-20 flex flex-col items-center justify-center mt-12">
-            {!videoUrls.length && (
+            {!videoNames.length && (
                 <>
                     <h2 className="text-[#faeed7] text-2xl font-bold mb-4">
                         Feed Content
@@ -176,7 +176,7 @@ function BloomScroll() {
                     </p>
                 </>
             )}
-            {videoUrls.length > 0 && (
+            {videoNames.length > 0 && (
                 <div className="relative overflow-x-hidden">
                     <div className="flex flex-col snap-y snap-mandatory h-[690px] overflow-y-auto">
                         <div
@@ -188,11 +188,11 @@ function BloomScroll() {
                                 <ChevronsDown className="w-10 h-10 text-white p-1" />
                             </h1>
                         </div>
-                        {videoUrls.map((videoUrl, index) => (
+                        {videoNames.map((videoName, index) => (
                             <BloomPetal
                                 key={index}
                                 ref={(el) => (videoRefs.current[index] = el)}
-                                src={videoUrl}
+                                videoName={videoName}
                                 handleVideoHold={handleVideoHold}
                                 handlePlayPause={handlePlayPause}
                                 isFastForwards={isFastForwards}

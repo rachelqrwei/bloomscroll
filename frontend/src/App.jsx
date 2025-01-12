@@ -5,7 +5,6 @@ import {
     Route,
     Routes,
     useNavigate,
-    useLocation,
 } from "react-router-dom";
 import Clock from "./components/Clock";
 import ProgressBar from "./components/ProgressBar";
@@ -14,6 +13,7 @@ import LibraryModal from "./modal/librarymodal";
 import Navbar from "./components/NavBar";
 import Header from "./components/Header";
 import BloomScroll from "./BloomScroll";
+import Profile from "./Profile";
 
 function HomeContent({ progress, streak, onComplete }) {
     const [showInputModal, setShowInputModal] = useState(false);
@@ -150,6 +150,7 @@ function App() {
                                 />
                             }
                         />
+                        <Route path="/profile" element={<Profile />} />
                     </Routes>
                 </main>
 
