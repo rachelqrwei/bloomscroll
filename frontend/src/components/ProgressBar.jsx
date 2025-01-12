@@ -5,7 +5,8 @@ const ProgressBar = ({progress}) => {
   const strokeWidth = 13;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
-
+  // Determine which image to use based on progress
+  const flowerImage = progress > 58 ? "../../public/flower-pink.png" : "../../public/flower-grey.png";
 
   return (
     <div className=" m-[5svh] relative flex justify-center items-center ">
@@ -42,7 +43,7 @@ const ProgressBar = ({progress}) => {
       </svg>
       {/* Center Image */}
       <img
-        src="../../public/flower-grey.png" // Ensure this path points to your image
+        src= {flowerImage} // Ensure this path points to your image
         alt="Flower"
         className="absolute w-[120px] h-[120px]"
         style={{

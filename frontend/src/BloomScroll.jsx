@@ -42,7 +42,7 @@ function BloomScroll() {
     };
 
     return (
-        <div className="z-20 flex flex-col items-center justify-center mt-16 mb-20">
+        <div className="z-20 flex flex-col items-center justify-center mt-12 ">
             {!videoUrl && (
                 <>
                     <h2 className="text-[#faeed7] text-2xl font-bold mb-4">
@@ -54,7 +54,7 @@ function BloomScroll() {
                 </>
             )}
             {videoUrl && (
-                <div className="relative">
+                <div className="relative overflow-hidden">
                     <video
                         ref={videoRef}
                         src={videoUrl}

@@ -37,10 +37,12 @@ function HomeContent({ progress, streak, onComplete }) {
       <div className="text-[#faeed7] text-xl tracking-tight font-bold flex justify-center items-center font-mono">
         you're on a {streak} day streak!
       </div>
-      {/* Rest of the HomeContent component remains the same */}
-      <div className="border-t-2 w-[80%] border-[#faeed7] my-4"></div>
 
-      <div className="flex flex-col space-y-4 w-full m-8 max-w-[86%]">
+
+      {/* horizontal divider*/}
+      <div className="border-t-2 w-[80%] border-[#faeed7] mt-6"></div>
+
+      <div className="flex flex-col space-y-4 w-full mt-6 max-w-[86%]">
       <button
           onClick={() => setShowInputModal(true)}
           className="bg-[#faeed7] text-[#384649] px-6 py-3 rounded-2xl text-left flex items-center justify-start space-x-4"
@@ -75,7 +77,7 @@ function HomeContent({ progress, streak, onComplete }) {
 }
 
 function App() {
-  const [progress, setProgress] = useState(71); // Initial progress value
+  const [progress, setProgress] = useState(57); // Initial progress value
   const [streak, setStreak] = useState(10); // Initial streak value
 
   const handleCompletion = () => {
@@ -85,15 +87,14 @@ function App() {
 
   return (
     <Router>
-      <div className="relative flex flex-col min-h-screen bg-gradient-to-b from-[#203337] via-[#233132] to-[#30505d]">
-        <div
+      <div className="relative flex flex-col h-screen bg-gradient-to-b from-[#203337] via-[#233132] to-[#30505d]">
+      <div
           className="fixed top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center z-10"
           style={{ backgroundImage: "url('/indexbg.png')" }}
         ></div>
-
         <Header />
 
-        <main className="flex-grow z-20">
+        <main className="flex z-20 overflow-hidden">
           <Routes>
             <Route 
               path="/" 
