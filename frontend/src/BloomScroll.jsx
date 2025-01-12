@@ -24,6 +24,7 @@ function BloomScroll() {
 
     useEffect(() => {
         console.log("Prompt:", prompt);
+        if (prompt == "default") return;
 
         // Fetch video URLs based on the prompt
         const fetchVideoUrls = async () => {

@@ -57,7 +57,7 @@ app.get("/test", (req, res) => {
     });
 });
 
-app.post("/generaaaaate-video", async (req, res) => {
+app.post("/generate-video", async (req, res) => {
     try {
         const venv = path.join(__dirname, "videoGen", ".venv", "bin", "python");
         const { prompt, useAppPexel } = req.body;
