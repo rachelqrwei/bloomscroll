@@ -1,9 +1,8 @@
-import time
 import os
 import tempfile
 import platform
 import subprocess
-from moviepy.editor import (
+from moviepy import (
     AudioFileClip,
     CompositeVideoClip,
     CompositeAudioClip,
@@ -68,7 +67,7 @@ def get_output_media(audio_file, timed_captions, background_video_urls, video_se
             download_file(video_url, video_filename)
             
             video_clip = VideoFileClip(video_filename)
-            video_clip = video_clip.set_start(t1).set_end(t2)
+            video_clip = video_clip.with_start(t1).with_end(t2).resized((720,1280))
             visual_clips.append(video_clip)
         
         # prepare audio
@@ -78,24 +77,33 @@ def get_output_media(audio_file, timed_captions, background_video_urls, video_se
 
         # create caption overlays
         for (t1, t2), text in timed_captions:
-            text_clip = TextClip(
-                txt=text,
-                fontsize=50,
-                color="white",
-                stroke_width=2,
-                stroke_color="black",
-                method="label"
-            )
-            text_clip = (
-                text_clip
-                .set_start(t1)
-                .set_end(t2)
-                .set_position(["center", 1600])
-            )
-            visual_clips.append(text_clip)
+            # Create background clip
+            bg_clip = TextClip(
+                text=text,  # Create background sized to text
+                font_size=32,
+                color='black',
+                stroke_color='black',
+                stroke_width=1,
+                bg_color='black',
+                font='Arial'
+            ).with_duration(t2 - t1).with_start(t1).with_position(('center', 900))
+
+            # Create text clip with shadow
+            subtitle_clip = TextClip(
+                text=text,
+                font_size=30,
+                color='white',
+                stroke_color='black',  # Add a shadow-like effect
+                stroke_width=2,        # Increase stroke width for better visibility
+                font='Arial'
+            ).with_duration(t2 - t1).with_start(t1).with_position(('center', 900))
+
+            # Add clips to the visual_clips list
+            visual_clips.append(bg_clip)
+            visual_clips.append(subtitle_clip)
 
         # combine all visual elements
-        video = CompositeVideoClip(visual_clips)
+        video = CompositeVideoClip(visual_clips, size=(720,1280))
         
         # add audio if available
         if audio_clips:
