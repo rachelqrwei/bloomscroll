@@ -1,0 +1,18 @@
+{
+    "name": "Bloomscroll",
+    "short_name": "BS",
+    "description": "AI generated doom scrolling.",
+    "icons": [
+        {
+            "src": "flower-pink.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "background_color": "#000",
+    "theme_color": "#000",
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/",
+    "orientation": "portrait"
+}
