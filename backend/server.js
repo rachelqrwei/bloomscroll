@@ -54,13 +54,7 @@ app.get("/test", (req, res) => {
 
 app.post("/generate-video", async (req, res) => {
     try {
-        ///Users/itsmarsss/Documents/Projects/bloomscroller/.venv/bin/python
-        const venv = path.join(
-            path.dirname(__dirname),
-            ".venv",
-            "bin",
-            "python"
-        );
+        const venv = path.join(__dirname, ".venv", "bin", "python");
         const { prompt, useAppPexel } = req.body;
         const scriptName = useAppPexel ? "app_pexel.py" : "app_brainrot.py";
         const filename = `${prompt.replace(/\s+/g, "_")}_${Date.now()}.mp4`;

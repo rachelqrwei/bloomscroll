@@ -39,7 +39,7 @@ async def voice_generator(text, output_filename):
 
 async def main():
     text_to_generate = "This is a test of the ElevenLabs API."
-    output_file = "output.mp3"
+    output_file = "./.logs/test_output.mp3"
     await voice_generator(text_to_generate, output_file)
 
 if __name__ == "__main__":

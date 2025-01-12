@@ -1,4 +1,3 @@
-import whisper_timestamped as whisper
 from whisper_timestamped import load_model, transcribe_timestamped
 import re
 
