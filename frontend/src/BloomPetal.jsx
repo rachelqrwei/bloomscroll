@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Play, Pause, Share, FastForward } from "lucide-react";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const BloomPetal = React.forwardRef(
     (
@@ -10,10 +11,12 @@ const BloomPetal = React.forwardRef(
             handlePlayPause,
             isFastForwards,
             isPlaying,
+            miniDisplay,
         },
         ref
     ) => {
         const [isLiked, setIsLiked] = useState(false);
+        const navigate = useNavigate();
 
         useEffect(() => {
             // Check if the video is liked when the component mounts
@@ -65,6 +68,7 @@ const BloomPetal = React.forwardRef(
                 setIsLiked(true); // Set the state to true if the video is liked
             } else {
                 console.log("Error liking the video:", data.error);
+                navigate("/profile");
             }
         };
 
@@ -88,11 +92,16 @@ const BloomPetal = React.forwardRef(
                 setIsLiked(false); // Set the state to false if the video is unliked
             } else {
                 console.log("Error unliking the video:", data.error);
+                navigate("/profile");
             }
         };
 
         return (
-            <div className="relative w-full max-w-2xl h-[690px] object-cover rounded-lg shadow-lg snap-start">
+            <div
+                className={`relative ${
+                    miniDisplay ? "w-[130px] h-[230px]" : "w-[390px] h-[690px]"
+                } max-w-2xl object-cover shadow-lg snap-start`}
+            >
                 <video
                     ref={ref}
                     src={`http://localhost:3001/videos/${videoName}`}
@@ -101,43 +110,49 @@ const BloomPetal = React.forwardRef(
                     onMouseUp={handleVideoHold}
                     onTouchStart={handleVideoHold}
                     onTouchEnd={handleVideoHold}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover ${
+                        miniDisplay ? "rounded-md" : "rounded-lg"
+                    }`}
                 />
 
-                <button
-                    onClick={handlePlayPause}
-                    className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
-                >
-                    {isFastForwards ? (
-                        <FastForward className="w-6 h-6 text-white" />
-                    ) : isPlaying ? (
-                        <Pause className="w-6 h-6 text-white" />
-                    ) : (
-                        <Play className="w-6 h-6 text-white" />
-                    )}
-                </button>
-
-                <div className="absolute z-100 top-[45%] right-[5%]">
-                    <div
-                        className="items-center justify-center text-center pb-5"
-                        onClick={isLiked ? handleUnlike : handleLike}
+                {!miniDisplay && (
+                    <button
+                        onClick={handlePlayPause}
+                        className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
                     >
-                        <Heart
-                            className={`w-10 h-10 p-1 ${
-                                isLiked ? "text-red-500" : "text-white"
-                            }`}
-                        />
-                        <div className="text-white text-xs font-bold">
-                            {isLiked ? "Liked" : "Like"}
+                        {isFastForwards ? (
+                            <FastForward className="w-6 h-6 text-white" />
+                        ) : isPlaying ? (
+                            <Pause className="w-6 h-6 text-white" />
+                        ) : (
+                            <Play className="w-6 h-6 text-white" />
+                        )}
+                    </button>
+                )}
+
+                {!miniDisplay && (
+                    <div className="absolute z-100 top-[45%] right-[5%]">
+                        <div
+                            className="items-center justify-center text-center pb-5"
+                            onClick={isLiked ? handleUnlike : handleLike}
+                        >
+                            <Heart
+                                className={`w-10 h-10 p-1 ${
+                                    isLiked ? "text-red-500" : "text-white"
+                                }`}
+                            />
+                            <div className="text-white text-xs font-bold">
+                                {isLiked ? "Liked" : "Like"}
+                            </div>
+                        </div>
+                        <div className="items-center justify-center text-center">
+                            <Share className="w-10 h-10 text-white p-1" />
+                            <div className="text-white text-xs font-bold">
+                                Share
+                            </div>
                         </div>
                     </div>
-                    <div className="items-center justify-center text-center">
-                        <Share className="w-10 h-10 text-white p-1" />
-                        <div className="text-white text-xs font-bold">
-                            Share
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
         );
     }

@@ -48,7 +48,7 @@ function LibraryModal({ onClose }) {
                 </div>
 
                 <button
-                    className="w-full bg-white text-[#384649] font-bold py-3 mt-4"
+                    className="w-full bg-[#205e63] text-[#faeed7] font-bold py-3 mt-4"
                     onClick={() => onClose()}
                 >
                     Cancel

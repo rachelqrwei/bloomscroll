@@ -33,7 +33,10 @@ router.post("/signup", async (req, res) => {
         const result = await collection.insertOne({
             username,
             password: hashedPassword,
+            token: "",
             likes: [],
+            lastday: 0,
+            streak: 0,
         });
 
         res.status(201).json({
@@ -89,7 +92,7 @@ router.post("/signin", async (req, res) => {
 
         res.status(200).json({
             message: "Sign-in successful.",
-            token: userToken,
+            userToken,
         });
     } catch (error) {
         console.error("Error during sign-in:", error);
@@ -205,6 +208,90 @@ router.post("/isLiked", async (req, res) => {
         });
     } catch (error) {
         console.error("Error during isLiked check:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+// Get all liked videos route
+router.post("/getAllLikes", async (req, res) => {
+    try {
+        const { userToken } = req.body;
+
+        if (!userToken) {
+            return res.status(400).json({ error: "userToken is required." });
+        }
+
+        const db = mongoClient.db("bloomscroll");
+        const collection = db.collection("users");
+
+        // Find the user by token
+        const user = await collection.findOne({ token: userToken });
+
+        if (!user) {
+            return res.status(401).json({ error: "Invalid userToken." });
+        }
+
+        // Retrieve the list of liked video names
+        const likedVideos = user.likes || []; // Default to an empty array if no likes exist
+
+        res.status(200).json({ likedVideos });
+    } catch (error) {
+        console.error("Error fetching liked videos:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+// Progress route
+router.post("/progress", async (req, res) => {
+    try {
+        const { userToken } = req.body;
+
+        if (!userToken) {
+            return res.status(400).json({ error: "userToken is required." });
+        }
+
+        const db = mongoClient.db("bloomscroll");
+        const collection = db.collection("users");
+
+        // Find the user by token
+        const user = await collection.findOne({ token: userToken });
+
+        if (!user) {
+            return res.status(401).json({ error: "Invalid userToken." });
+        }
+
+        // Current date and yesterday's date
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        // Format dates as YYYY-MM-DD
+        const formattedToday = today.toISOString().split("T")[0];
+        const formattedYesterday = yesterday.toISOString().split("T")[0];
+        const lastday = user.lastday || null;
+
+        // Calculate streaks
+        let streak = user.streak || 0;
+        if (lastday === formattedYesterday) {
+            // Increment streak if last activity was yesterday
+            streak += 1;
+        } else if (lastday !== formattedToday) {
+            // Reset streak if no activity yesterday or today
+            streak = 0;
+        }
+
+        // Update the user's progress in the database
+        await collection.updateOne(
+            { token: userToken },
+            { $set: { lastday: formattedToday, streak } }
+        );
+
+        res.status(200).json({
+            lastday: lastday || "No activity recorded yet",
+            streak,
+        });
+    } catch (error) {
+        console.error("Error fetching user progress:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });
