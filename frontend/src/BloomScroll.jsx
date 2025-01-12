@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { Heart, Play, Pause, Share } from 'lucide-react';
 
 function BloomScroll() {
     const { prompt } = useParams();
@@ -66,9 +67,9 @@ function BloomScroll() {
                     />
                     <button
                         onClick={handlePlayPause}
-                        className="absolute bottom-8 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
+                        className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
                     >
-                        {isPlaying ? "⏸️" : "▶️"}
+                         {isPlaying ? <Pause className="w-6 h-6 text-white" /> : <Play className="w-6 h-6 text-white" />}
                     </button>
                 </div>
             )}

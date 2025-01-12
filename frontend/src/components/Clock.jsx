@@ -19,7 +19,7 @@ export default function Clock() {
   }, []);
 
   return (
-    <div className="mb-[4%] flex justify-center items-center h-full">
+    <div className="mb-[2%] flex justify-center items-center h-full">
       <p className="font-mono text-3xl font-bold tracking-tight text-[#c2cdda] opacity-85">{currentTime}</p>
     </div>
   );
