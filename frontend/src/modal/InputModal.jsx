@@ -23,7 +23,7 @@ function InputModal({ onClose }) {
                 className="flex-col bg-[#e7dfd8] rounded-2xl p-6 w-[90%] z-100 items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h2 className="text-xl text-[#384649] mb-4 text-center">Bloomscroll Initiation</h2>
+                <h2 className="text-xl font-bold text-[#384649] mb-4 text-center">Bloomscroll Initiation</h2>
 
                 {showWarning && (
                     <p className="text-red-500 text-sm font-bold mb-2 text-center">Please input a topic!</p>

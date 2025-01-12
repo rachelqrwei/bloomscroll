@@ -1,11 +1,11 @@
 import React from 'react';
 
-const ProgressBar = () => {
+const ProgressBar = ({progress}) => {
   const radius = 100; // Radius of the progress circle
   const strokeWidth = 13;
-  const progress = 71; // Progress percentage
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+
 
   return (
     <div className=" m-[5svh] relative flex justify-center items-center ">
