@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Heart, Play, Pause, Share, FastForward } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Heart, Play, Pause, Share, FastForward, X } from "lucide-react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
@@ -7,21 +7,31 @@ const BloomPetal = React.forwardRef(
     (
         {
             videoName,
-            handleVideoHold,
-            handlePlayPause,
-            isFastForwards,
-            isPlaying,
+            handleVideoHold: externalVideoHold,
+            handlePlayPause: externalPlayPause,
+            isFastForwards: externalIsFastForwards,
+            isPlaying: externalIsPlaying,
             miniDisplay,
         },
         ref
     ) => {
         const [isLiked, setIsLiked] = useState(false);
+        const [isExpanded, setIsExpanded] = useState(false);
+        const [isFastForwards, setIsFastForwards] = useState(false);
+        const [isPlaying, setIsPlaying] = useState(false);
+
+        const holdTimerRef = useRef(null);
+        const holdStartTimeRef = useRef(null);
+
         const navigate = useNavigate();
 
+        // Create a default ref if none is provided
+        const internalRef = useRef(null);
+        const videoRef = ref || internalRef;
+
         useEffect(() => {
-            // Check if the video is liked when the component mounts
             const checkIfLiked = async () => {
-                const userToken = Cookies.get("token"); // Assuming token is stored in cookies
+                const userToken = Cookies.get("token");
 
                 const response = await fetch(
                     "http://localhost:3001/user/isLiked",
@@ -31,17 +41,17 @@ const BloomPetal = React.forwardRef(
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            userToken: userToken,
-                            videoName: videoName,
+                            userToken,
+                            videoName,
                         }),
                     }
                 );
 
                 const data = await response.json();
                 if (response.ok) {
-                    setIsLiked(data.isLiked); // Set the state based on the response
+                    setIsLiked(data.isLiked);
                 } else {
-                    console.log("Error checking like status:", data.error);
+                    console.error("Error checking like status:", data.error);
                 }
             };
 
@@ -49,109 +59,171 @@ const BloomPetal = React.forwardRef(
         }, [videoName]);
 
         const handleLike = async () => {
-            const userToken = Cookies.get("token"); // Assuming token is stored in cookies
+            const userToken = Cookies.get("token");
 
-            // Send a request to like/unlike the video
             const response = await fetch("http://localhost:3001/user/like", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    userToken: userToken,
-                    videoName: videoName,
+                    userToken,
+                    videoName,
                 }),
             });
 
             const data = await response.json();
             if (response.ok) {
-                setIsLiked(true); // Set the state to true if the video is liked
+                setIsLiked(true);
             } else {
-                console.log("Error liking the video:", data.error);
+                console.error("Error liking the video:", data.error);
                 navigate("/profile");
             }
         };
 
         const handleUnlike = async () => {
-            const userToken = Cookies.get("token"); // Assuming token is stored in cookies
+            const userToken = Cookies.get("token");
 
-            // Send a request to unlike the video
             const response = await fetch("http://localhost:3001/user/unlike", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    userToken: userToken,
-                    videoName: videoName,
+                    userToken,
+                    videoName,
                 }),
             });
 
             const data = await response.json();
             if (response.ok) {
-                setIsLiked(false); // Set the state to false if the video is unliked
+                setIsLiked(false);
             } else {
-                console.log("Error unliking the video:", data.error);
+                console.error("Error unliking the video:", data.error);
                 navigate("/profile");
             }
         };
 
+        const toggleExpand = () => {
+            if (videoRef.current) {
+                videoRef.current.pause();
+                setIsPlaying(false);
+            }
+            setIsExpanded((prev) => !prev);
+        };
+
+        const handlePlayPause = useCallback(() => {
+            if (videoRef.current) {
+                if (videoRef.current.paused) {
+                    videoRef.current.play();
+                    setIsPlaying(true);
+                } else {
+                    videoRef.current.pause();
+                    setIsPlaying(false);
+                }
+            }
+        }, [videoRef]);
+
+        const handleVideoHold = useCallback(
+            (e) => {
+                if (!videoRef.current) return;
+
+                if (e.type === "mousedown" || e.type === "touchstart") {
+                    holdStartTimeRef.current = Date.now();
+                    holdTimerRef.current = setTimeout(() => {
+                        videoRef.current.playbackRate = 2.0;
+                        setIsFastForwards(true);
+                    }, 500);
+                } else if (e.type === "mouseup" || e.type === "touchend") {
+                    const holdDuration = Date.now() - holdStartTimeRef.current;
+                    clearTimeout(holdTimerRef.current);
+                    videoRef.current.playbackRate = 1.0;
+                    setIsFastForwards(false);
+
+                    if (holdDuration < 500) {
+                        externalPlayPause
+                            ? externalPlayPause()
+                            : handlePlayPause();
+                    }
+                }
+            },
+            [videoRef, externalPlayPause, handlePlayPause]
+        );
+
         return (
             <div
-                className={`relative ${
-                    miniDisplay ? "w-[130px] h-[230px]" : "w-[390px] h-[690px]"
-                } max-w-2xl object-cover shadow-lg snap-start`}
+                className={`${
+                    isExpanded
+                        ? "w-[390px] h-[690px] z-50 absolute top-[50px] left-0"
+                        : miniDisplay
+                        ? "relative w-[130px] h-[230px]"
+                        : "relative w-[390px] h-[690px]"
+                } object-cover shadow-lg snap-start`}
+                onClick={miniDisplay && !isExpanded ? toggleExpand : undefined}
             >
                 <video
-                    ref={ref}
+                    ref={videoRef}
                     src={`http://localhost:3001/videos/${videoName}`}
                     loop
-                    onMouseDown={handleVideoHold}
-                    onMouseUp={handleVideoHold}
-                    onTouchStart={handleVideoHold}
-                    onTouchEnd={handleVideoHold}
+                    onMouseDown={externalVideoHold || handleVideoHold}
+                    onMouseUp={externalVideoHold || handleVideoHold}
+                    onTouchStart={externalVideoHold || handleVideoHold}
+                    onTouchEnd={externalVideoHold || handleVideoHold}
                     className={`w-full h-full object-cover ${
-                        miniDisplay ? "rounded-md" : "rounded-lg"
+                        isExpanded
+                            ? "w-[390px] h-[690px]"
+                            : miniDisplay
+                            ? "rounded-md"
+                            : "rounded-lg"
                     }`}
                 />
 
-                {!miniDisplay && (
+                {miniDisplay && isExpanded && (
                     <button
-                        onClick={handlePlayPause}
-                        className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
+                        onClick={toggleExpand}
+                        className="absolute top-4 right-4 bg-black/50 p-3 rounded-full text-xl w-10 h-10 flex items-center justify-center"
                     >
-                        {isFastForwards ? (
-                            <FastForward className="w-6 h-6 text-white" />
-                        ) : isPlaying ? (
-                            <Pause className="w-6 h-6 text-white" />
-                        ) : (
-                            <Play className="w-6 h-6 text-white" />
-                        )}
+                        <X className="w-6 h-6 text-white" />
                     </button>
                 )}
 
-                {!miniDisplay && (
-                    <div className="absolute z-100 top-[45%] right-[5%]">
-                        <div
-                            className="items-center justify-center text-center pb-5"
-                            onClick={isLiked ? handleUnlike : handleLike}
+                {((miniDisplay && isExpanded) || !miniDisplay) && (
+                    <>
+                        <button
+                            onClick={externalPlayPause || handlePlayPause}
+                            className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
                         >
-                            <Heart
-                                className={`w-10 h-10 p-1 ${
-                                    isLiked ? "text-red-500" : "text-white"
-                                }`}
-                            />
-                            <div className="text-white text-xs font-bold">
-                                {isLiked ? "Liked" : "Like"}
+                            {externalIsFastForwards || isFastForwards ? (
+                                <FastForward className="w-6 h-6 text-white" />
+                            ) : externalIsPlaying || isPlaying ? (
+                                <Pause className="w-6 h-6 text-white" />
+                            ) : (
+                                <Play className="w-6 h-6 text-white" />
+                            )}
+                        </button>
+
+                        <div className="absolute z-100 top-[45%] right-[5%]">
+                            <div
+                                className="items-center justify-center text-center pb-5"
+                                onClick={isLiked ? handleUnlike : handleLike}
+                            >
+                                <Heart
+                                    className={`w-10 h-10 p-1 ${
+                                        isLiked ? "text-red-500" : "text-white"
+                                    }`}
+                                />
+                                <div className="text-white text-xs font-bold">
+                                    {isLiked ? "Liked" : "Like"}
+                                </div>
+                            </div>
+                            <div className="items-center justify-center text-center">
+                                <Share className="w-10 h-10 text-white p-1" />
+                                <div className="text-white text-xs font-bold">
+                                    Share
+                                </div>
                             </div>
                         </div>
-                        <div className="items-center justify-center text-center">
-                            <Share className="w-10 h-10 text-white p-1" />
-                            <div className="text-white text-xs font-bold">
-                                Share
-                            </div>
-                        </div>
-                    </div>
+                    </>
                 )}
             </div>
         );

@@ -8,6 +8,7 @@ function Profile() {
     const [password, setPassword] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [likedVideos, setLikedVideos] = useState([]); // State for liked videos
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,7 +22,7 @@ function Profile() {
             // Fetch liked videos
             fetchLikedVideos(token);
         }
-    }, []);
+    }, [isLoggedIn]);
 
     // Fetch liked videos from the backend
     const fetchLikedVideos = async (userToken) => {
@@ -183,7 +184,7 @@ function Profile() {
                         {likedVideos.map((videoName, index) => (
                             <BloomPetal
                                 key={index}
-                                src={`https://path/to/videos/${videoName}.mp4`} // Adjust the video source URL
+                                index={index}
                                 videoName={videoName}
                                 miniDisplay={true}
                             />
