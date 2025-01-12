@@ -34,7 +34,7 @@ const BloomPetal = React.forwardRef(
                 const userToken = Cookies.get("token");
 
                 const response = await fetch(
-                    "http://localhost:3001/user/isLiked",
+                    "https://b68f-130-113-151-229.ngrok-free.app/user/isLiked",
                     {
                         method: "POST",
                         headers: {
@@ -61,16 +61,19 @@ const BloomPetal = React.forwardRef(
         const handleLike = async () => {
             const userToken = Cookies.get("token");
 
-            const response = await fetch("http://localhost:3001/user/like", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userToken,
-                    videoName,
-                }),
-            });
+            const response = await fetch(
+                "https://b68f-130-113-151-229.ngrok-free.app/user/like",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        userToken,
+                        videoName,
+                    }),
+                }
+            );
 
             const data = await response.json();
             if (response.ok) {
@@ -84,16 +87,19 @@ const BloomPetal = React.forwardRef(
         const handleUnlike = async () => {
             const userToken = Cookies.get("token");
 
-            const response = await fetch("http://localhost:3001/user/unlike", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userToken,
-                    videoName,
-                }),
-            });
+            const response = await fetch(
+                "https://b68f-130-113-151-229.ngrok-free.app/user/unlike",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        userToken,
+                        videoName,
+                    }),
+                }
+            );
 
             const data = await response.json();
             if (response.ok) {
@@ -168,7 +174,7 @@ const BloomPetal = React.forwardRef(
             >
                 <video
                     ref={videoRef}
-                    src={`http://localhost:3001/videos/${videoName}`}
+                    src={`https://b68f-130-113-151-229.ngrok-free.app/videos/${videoName}`}
                     loop
                     onMouseDown={externalVideoHold || handleVideoHold}
                     onMouseUp={externalVideoHold || handleVideoHold}
