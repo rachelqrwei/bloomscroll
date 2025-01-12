@@ -5,3 +5,4 @@ node_modules
 .vscode
 .logs
 __pycache__
+*.mp4
