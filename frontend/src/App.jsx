@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Clock from './components/Clock';
@@ -8,8 +9,7 @@ import Navbar from './components/NavBar';
 import Header from './components/Header';
 import BloomScroll from './BloomScroll';
 
-function HomeContent() {
-  const [streak, setStreak] = useState(10);
+function HomeContent({ progress, streak, onComplete }) {
   const [showInputModal, setShowInputModal] = useState(false);
   const [showLibraryModal, setShowLibraryModal] = useState(false);
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ function HomeContent() {
   const handleInputModalClose = (prompt) => {
     setShowInputModal(false);
     if (prompt) {
+      onComplete();
       navigate(`/bloomscroll/${prompt}`);
     }
   };
@@ -24,21 +25,23 @@ function HomeContent() {
   const handleLibraryModalClose = (prompt) => {
     setShowLibraryModal(false);
     if (prompt) {
+      onComplete();
       navigate(`/bloomscroll/${prompt}`);
     }
   };
 
   return (
     <div className="z-20 flex flex-col items-center justify-center mt-16 mb-20">
-      <ProgressBar />
+      <ProgressBar progress={progress}/>
       <Clock />
       <div className="text-[#faeed7] text-xl tracking-tight font-bold flex justify-center items-center font-mono">
         you're on a {streak} day streak!
       </div>
+      {/* Rest of the HomeContent component remains the same */}
       <div className="border-t-2 w-[80%] border-[#faeed7] my-4"></div>
 
       <div className="flex flex-col space-y-4 w-full m-8 max-w-[86%]">
-        <button
+      <button
           onClick={() => setShowInputModal(true)}
           className="bg-[#faeed7] text-[#384649] px-6 py-3 rounded-2xl text-left flex items-center justify-start space-x-4"
         >
@@ -72,6 +75,14 @@ function HomeContent() {
 }
 
 function App() {
+  const [progress, setProgress] = useState(71); // Initial progress value
+  const [streak, setStreak] = useState(10); // Initial streak value
+
+  const handleCompletion = () => {
+    setProgress(prev => Math.min(prev + 14, 100)); // Ensure progress doesn't exceed 100
+    setStreak(prev => prev + 1);
+  };
+
   return (
     <Router>
       <div className="relative flex flex-col min-h-screen bg-gradient-to-b from-[#203337] via-[#233132] to-[#30505d]">
@@ -84,8 +95,25 @@ function App() {
 
         <main className="flex-grow z-20">
           <Routes>
-            <Route path="/" element={<HomeContent />} />
-            <Route path="/bloomscroll/:prompt" element={<BloomScroll />} />
+            <Route 
+              path="/" 
+              element={
+                <HomeContent 
+                  progress={progress} 
+                  streak={streak} 
+                  onComplete={handleCompletion}
+                />
+              } 
+            />
+            <Route 
+              path="/bloomscroll/:prompt" 
+              element={
+                <BloomScroll 
+                  progress={progress} 
+                  streak={streak}
+                />
+              } 
+            />
           </Routes>
         </main>
 
@@ -96,4 +124,3 @@ function App() {
 }
 
 export default App;
-
