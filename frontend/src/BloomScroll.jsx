@@ -29,7 +29,7 @@ function BloomScroll() {
         const fetchVideoUrls = async () => {
             try {
                 const response1 = await fetch(
-                    "http://172.18.78.197:3001/generate-video",
+                    "https://03a2-130-113-151-229.ngrok-free.app/generate-video",
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -44,7 +44,7 @@ function BloomScroll() {
                 setVideoNames((prev) => [...prev, data1.videoUrls[0]]);
 
                 const response2 = await fetch(
-                    "http://172.18.78.197:3001/generate-video",
+                    "https://03a2-130-113-151-229.ngrok-free.app/generate-video",
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
