@@ -128,6 +128,23 @@ function BloomScroll() {
                             <Play className="w-6 h-6 text-white" />
                         )}
                     </button>
+
+                    <div className="fixed z-100 top-[45%] right-[5%]">
+                        <div className="items-center justify-center text-center pb-5 ">
+                            <Heart className="w-10 h-10 text-white p-1 " />
+                            <div className="text-white text-xs font-bold">
+                                {" "}
+                                Like
+                            </div>
+                        </div>
+                        <div className="items-center justify-center text-center">
+                            <Share className="w-10 h-10 text-white p-1" />
+                            <div className="text-white text-xs font-bold">
+                                {" "}
+                                Share
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
