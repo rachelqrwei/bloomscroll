@@ -28,7 +28,7 @@ function Profile() {
     const fetchLikedVideos = async (userToken) => {
         try {
             const response = await fetch(
-                "https://03a2-130-113-151-229.ngrok-free.app/user/getAllLikes",
+                "http://172.18.78.237:6969/user/getAllLikes",
                 {
                     method: "POST",
                     headers: {
@@ -53,7 +53,7 @@ function Profile() {
         if (username && password) {
             try {
                 const response = await fetch(
-                    "https://03a2-130-113-151-229.ngrok-free.app/user/signin",
+                    "http://172.18.78.237:6969/user/signin",
                     {
                         method: "POST",
                         headers: {
@@ -84,7 +84,7 @@ function Profile() {
         if (username && password) {
             try {
                 const response = await fetch(
-                    "https://03a2-130-113-151-229.ngrok-free.app/user/signup",
+                    "http://172.18.78.237:6969/user/signup",
                     {
                         method: "POST",
                         headers: {

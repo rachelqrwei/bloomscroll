@@ -34,7 +34,7 @@ const BloomPetal = React.forwardRef(
                 const userToken = Cookies.get("token");
 
                 const response = await fetch(
-                    "https://03a2-130-113-151-229.ngrok-free.app/user/isLiked",
+                    "http://172.18.78.237:6969/user/isLiked",
                     {
                         method: "POST",
                         headers: {
@@ -62,7 +62,7 @@ const BloomPetal = React.forwardRef(
             const userToken = Cookies.get("token");
 
             const response = await fetch(
-                "https://03a2-130-113-151-229.ngrok-free.app/user/like",
+                "http://172.18.78.237:6969/user/like",
                 {
                     method: "POST",
                     headers: {
@@ -88,7 +88,7 @@ const BloomPetal = React.forwardRef(
             const userToken = Cookies.get("token");
 
             const response = await fetch(
-                "https://03a2-130-113-151-229.ngrok-free.app/user/unlike",
+                "http://172.18.78.237:6969/user/unlike",
                 {
                     method: "POST",
                     headers: {
@@ -174,7 +174,7 @@ const BloomPetal = React.forwardRef(
             >
                 <video
                     ref={videoRef}
-                    src={`https://03a2-130-113-151-229.ngrok-free.app/videos/${videoName}`}
+                    src={`http://172.18.78.237:6969/videos/${videoName}`}
                     loop
                     onMouseDown={externalVideoHold || handleVideoHold}
                     onMouseUp={externalVideoHold || handleVideoHold}
