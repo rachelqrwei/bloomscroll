@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Heart, Play, Pause, Share } from 'lucide-react';
+import { Heart, Play, Pause, Share, FastForward } from "lucide-react";
 
 function BloomScroll() {
     const { prompt } = useParams();
@@ -12,7 +12,10 @@ function BloomScroll() {
     ]);
     const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
     const videoRef = useRef(null);
+    const [isFastForwards, setIsFastForwards] = useState(false);
     const [isPlaying, setIsPlaying] = useState(true);
+    const holdTimerRef = useRef(null);
+    const holdStartTimeRef = useRef(null);
 
     useEffect(() => {
         console.log("Prompt:", prompt);
@@ -53,13 +56,37 @@ function BloomScroll() {
     }, [prompt]);
 
     const handlePlayPause = () => {
+        if (!isFastForwards) {
+            const videoElement = videoRef.current;
+            if (videoElement.paused) {
+                videoElement.play();
+                setIsPlaying(true);
+            } else {
+                videoElement.pause();
+                setIsPlaying(false);
+            }
+        }
+    };
+
+    const handleVideoHold = (e) => {
         const videoElement = videoRef.current;
-        if (videoElement.paused) {
-            videoElement.play();
-            setIsPlaying(true);
-        } else {
-            videoElement.pause();
-            setIsPlaying(false);
+        if (e.type === "mousedown" || e.type === "touchstart") {
+            holdStartTimeRef.current = Date.now();
+            holdTimerRef.current = setTimeout(() => {
+                videoElement.playbackRate = 2.0;
+                setIsFastForwards(true);
+            }, 500);
+        } else if (e.type === "mouseup" || e.type === "touchend") {
+            const holdDuration = Date.now() - holdStartTimeRef.current;
+            if (holdTimerRef.current) {
+                clearTimeout(holdTimerRef.current);
+            }
+            videoElement.playbackRate = 1.0;
+            setIsFastForwards(false);
+
+            if (holdDuration < 500) {
+                handlePlayPause();
+            }
         }
     };
 
@@ -84,13 +111,22 @@ function BloomScroll() {
                         muted
                         loop
                         className="w-full max-w-2xl rounded-lg shadow-lg"
-                        onClick={handlePlayPause}
+                        onMouseDown={handleVideoHold}
+                        onMouseUp={handleVideoHold}
+                        onTouchStart={handleVideoHold}
+                        onTouchEnd={handleVideoHold}
                     />
                     <button
                         onClick={handlePlayPause}
                         className="absolute bottom-16 left-4 bg-black/50 p-3 rounded-full text-xl w-12 h-12 flex items-center justify-center"
                     >
-                         {isPlaying ? <Pause className="w-6 h-6 text-white" /> : <Play className="w-6 h-6 text-white" />}
+                        {isFastForwards ? (
+                            <FastForward className="w-6 h-6 text-white" />
+                        ) : isPlaying ? (
+                            <Pause className="w-6 h-6 text-white" />
+                        ) : (
+                            <Play className="w-6 h-6 text-white" />
+                        )}
                     </button>
                 </div>
             )}
