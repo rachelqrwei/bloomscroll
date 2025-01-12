@@ -54,15 +54,13 @@ app.get("/test", (req, res) => {
 
 app.post("/generate-video", async (req, res) => {
     try {
-        const venv = path.join(__dirname, ".venv", "bin", "python");
+        const venv = path.join(__dirname, "videoGen", ".venv", "bin", "python");
         const { prompt, useAppPexel } = req.body;
-        const scriptName = useAppPexel ? "app_pexel.py" : "app_brainrot.py";
+        const scriptName =
+            /*useAppPexel ? "app_pexel.py" :*/ " -m videoGen.app_brainrot";
         const filename = `${prompt.replace(/\s+/g, "_")}_${Date.now()}.mp4`;
         const outputFilename = path.join(videosDir, filename);
-        const command = `${venv} ${path.join(
-            __dirname,
-            scriptName
-        )} "${prompt}" "${outputFilename}"`;
+        const command = `${venv} ${scriptName} "${prompt}" "${outputFilename}"`;
 
         console.log("Executing command:", command);
 
