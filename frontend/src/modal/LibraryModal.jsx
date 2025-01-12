@@ -11,7 +11,7 @@ const subjects = [
 
 function LibraryModal({ onClose }) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end pb-[10%] justify-center z-50" onClick={() => onClose()}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end pb-[20%] justify-center z-50" onClick={() => onClose()}>
       <div className="bg-[#e7dfd8] rounded-t-2xl w-full max-w-md max-h-[65vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="p-6">
           <div className="flex flex-col items-center mb-6">
