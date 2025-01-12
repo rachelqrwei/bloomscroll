@@ -1,19 +1,12 @@
-import os 
 import requests
-from utility.utils import log_response, LOG_TYPE_PEXEL
-from dotenv import load_dotenv
 from typing import List, Tuple, Optional
+from videoGen.env_vars import PEXELS_API_KEY
+from videoGen.utility.logger import log_response, LOG_TYPE_PEXEL
 
-# load environment variables
-load_dotenv()
-
-# get pexels api key from environment
-PEXELS_API_KEY = os.getenv('PEXELS_API_KEY')
-
-#search for videos on pexels matching the query string
+# search for videos on pexels matching the query string
 #   query_string(str): search term to find videos
 #   orientation_landscape(bool): whether to search for landscape (16:9) or portrait (9:16) videos
-#returns dict of json response from pexels api containing video results
+# returns dict of json response from pexels api containing video results
 def search_videos(query_string: str, orientation_landscape: bool = True) -> dict:
     url = "https://api.pexels.com/videos/search"
     headers = {
@@ -33,18 +26,14 @@ def search_videos(query_string: str, orientation_landscape: bool = True) -> dict
     log_response(LOG_TYPE_PEXEL, query_string, json_data)
     return json_data
 
+# get the best matching video for the query that hasn't been used yet
+# args:
+#   query_string (str): search term to find video
+#   orientation_landscape (bool): whether to get landscape (16:9) or portrait (9:16) video
+#   used_vids (List[str]): list of video urls that have already been used
+# returns:
+#   Optional[str]: url of best matching video, or None if no matches found
 def getBestVideo(query_string: str, orientation_landscape: bool = True, used_vids: List[str] = None) -> Optional[str]:
-    """
-    get the best matching video for the query that hasn't been used yet
-    
-    args:
-        query_string (str): search term to find video
-        orientation_landscape (bool): whether to get landscape (16:9) or portrait (9:16) video
-        used_vids (List[str]): list of video urls that have already been used
-        
-    returns:
-        Optional[str]: url of best matching video, or None if no matches found
-    """
     if used_vids is None:
         used_vids = []
         
@@ -82,10 +71,8 @@ def getBestVideo(query_string: str, orientation_landscape: bool = True, used_vid
     print(f"no matching videos found for query: {query_string}")
     return None
 
+# generate video urls for each timed search term, ensuring max 15 videos
 def generate_video_url(timed_video_searches: List[Tuple[List[float], List[str]]], video_server: str) -> List[Tuple[List[float], Optional[str]]]:
-    """
-    generate video urls for each timed search term, ensuring max 15 videos
-    """
     timed_video_urls = []
     
     if video_server == "pexel":
@@ -117,18 +104,30 @@ def generate_video_url(timed_video_searches: List[Tuple[List[float], List[str]]]
 
     return timed_video_urls
 
-def generate_video_clips(script_sections):
-    clips = []
-    total_sections = len(script_sections)
+
+def main():
+    timed_video_searched = [[[0, 1], ["computer screen", "test environment", "tech setup"]], [[1, 2], ["video search", "generator screen", "tech interface"]]]
+    print(generate_video_url(timed_video_searched, "pexel"))
+
+if __name__ == "__main__":
+    main()
     
-    for i, section in enumerate(script_sections):
-        # Report progress (each section is roughly 20% of total progress)
-        progress = int((i / total_sections) * 20)
-        print(f"PROGRESS: {progress}")
+
+# ----------------------------------------------------------------
+# UNUSED
+
+# def generate_video_clips(script_sections):
+#     clips = []
+#     total_sections = len(script_sections)
+    
+#     for i, section in enumerate(script_sections):
+#         # Report progress (each section is roughly 20% of total progress)
+#         progress = int((i / total_sections) * 20)
+#         print(f"PROGRESS: {progress}")
         
-        # Generate clip for this section
-        clip = generate_clip_for_section(section)
-        clips.append(clip)
+#         # Generate clip for this section
+#         clip = generate_clip_for_section(section)
+#         clips.append(clip)
     
-    print("PROGRESS: 20")  # Video clips generation complete
-    return clips
+#     print("PROGRESS: 20")  # Video clips generation complete
+#     return clips

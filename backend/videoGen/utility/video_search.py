@@ -1,18 +1,17 @@
 from groq import Groq
-import os
 import json
 import re
-from datetime import datetime
-from utility.utils import log_response,LOG_TYPE_GPT
 from videoGen.env_vars import GROQ_API_KEY, GROQ_MODEL
-from prompts.prompts import VIDEO_PROMPT
+from videoGen.utility.logger import log_response, LOG_TYPE_GROQ
+from videoGen.utility.prompts.model_prompts import VIDEO_PROMPT
 
+#-----------------------------------------------------------
 
-# setup Groq client
+# Setup Groq client
 model = GROQ_MODEL
 client = Groq(api_key=GROQ_API_KEY)
 
-log_directory = ".logs/gpt_logs"
+#-----------------------------------------------------------
 
 def fix_json(json_str):
     # Replace typographical apostrophes with straight quotes
@@ -20,17 +19,16 @@ def fix_json(json_str):
     # Replace any incorrect quotes (e.g., mixed single and double quotes)
     json_str = json_str.replace("“", "\"").replace("”", "\"").replace("‘", "\"").replace("’", "\"")
     # Add escaping for quotes within the strings
-    json_str = json_str.replace('"you didn"t"', '"you didn\'t"')
+    json_str = json_str.replace('"n"t"', '"n\'t"') # [you didn"t] -> [you didn't]
     return json_str
 
-#generate timed video search queries
+# generate timed video search queries
 #   script(str): the video script text
 #   captions_timed(list): list of timed captions
-#returns list of timed search queries or None if error
+# returns list of timed search queries or None if error
 def getVideoSearchQueriesTimed(script, captions_timed):
     end = captions_timed[-1][0][1]
     try:
-        
         out = [[[0,0],""]]
         while out[-1][0][1] != end:
             content = call_Groq(script,captions_timed).replace("'",'"')
@@ -47,10 +45,10 @@ def getVideoSearchQueriesTimed(script, captions_timed):
    
     return None
 
-#call Groq API to generate video search queries
+# call Groq API to generate video search queries
 #   script(str): the video script text
 #   captions_timed(list): list of timed captions
-#returns str of generated search queries or None if error
+# returns str of generated search queries or None if error
 def call_Groq(script, captions_timed):
     user_content = """Script: {}
 Timed Captions:{}
@@ -69,12 +67,12 @@ Timed Captions:{}
     text = response.choices[0].message.content.strip()
     text = re.sub('\s+', ' ', text)
     print("Text", text)
-    log_response(LOG_TYPE_GPT,script,text)
+    log_response(LOG_TYPE_GROQ, script, text)
     return text
 
-#merge consecutive empty intervals in video segments
+# merge consecutive empty intervals in video segments
 #   segments(list): list of video segments with intervals and URLs
-#returns list of merged video segments
+# returns list of merged video segments
 def merge_empty_intervals(segments):
     merged = []
     i = 0
@@ -102,3 +100,12 @@ def merge_empty_intervals(segments):
             i += 1
     
     return merged
+
+
+def main():
+    script = "This is a test of the video search generator."
+    captions_timed = [[[0, 1], "This is a test"], [[1, 2], "of the video search generator."]]
+    print(getVideoSearchQueriesTimed(script, captions_timed))
+
+if __name__ == "__main__":
+    main()

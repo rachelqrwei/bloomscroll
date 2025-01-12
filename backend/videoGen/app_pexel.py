@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def generate_pexel_video(topic: str, output_filename: str) -> str:
     try:
         # temporary file for audio generation
-        audio_filename = "audio_tts.wav"
+        audio_filename = "./temp/audio_tts.wav"
         
         # generate script from topic
         script = script_generator(topic)

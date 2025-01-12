@@ -20,7 +20,7 @@ def process_video(script: str, output_filename: str) -> str:
             os.makedirs(output_dir, exist_ok=True)
 
         # Generate audio from the script
-        audio_filename = os.path.join(output_dir, "generated_audio.wav")
+        audio_filename = os.path.join(output_dir, "./temp/audio_tts.wav")
         asyncio.run(voice_generator(script, audio_filename))
         logging.info("Generated audio narration")
 
