@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function InputModal({ onClose }) {
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState("");
     const [showWarning, setShowWarning] = useState(false);
 
     const handleStart = () => {
@@ -9,7 +9,7 @@ function InputModal({ onClose }) {
             setShowWarning(true);
         } else {
             setShowWarning(false);
-            console.log('Starting Bloomscrolling with input:', input);
+            console.log("Starting Bloomscrolling with input:", input);
             onClose(input.trim());
         }
     };
@@ -23,10 +23,14 @@ function InputModal({ onClose }) {
                 className="flex-col bg-[#e7dfd8] rounded-2xl p-6 w-[90%] z-100 items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h2 className="text-xl font-bold text-[#384649] mb-4 text-center">Bloomscroll Initiation</h2>
+                <h2 className="text-xl font-bold text-[#384649] mb-4 text-center">
+                    Bloomscroll Initiation
+                </h2>
 
                 {showWarning && (
-                    <p className="text-red-500 text-sm font-bold mb-2 text-center">Please input a topic!</p>
+                    <p className="text-red-500 text-sm font-bold mb-2 text-center">
+                        Please input a topic!
+                    </p>
                 )}
 
                 <textarea
@@ -37,7 +41,7 @@ function InputModal({ onClose }) {
                         setInput(e.target.value);
                         if (e.target.value.trim()) setShowWarning(false);
                     }}
-                    style={{ lineHeight: '1.5', textAlign: 'center' }}
+                    style={{ lineHeight: "1.5", textAlign: "center" }}
                 />
 
                 <button
@@ -52,4 +56,3 @@ function InputModal({ onClose }) {
 }
 
 export default InputModal;
-

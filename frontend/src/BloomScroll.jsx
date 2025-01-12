@@ -4,9 +4,13 @@ import { Heart, Play, Pause, Share } from 'lucide-react';
 
 function BloomScroll() {
     const { prompt } = useParams();
-    const [videoUrl, setVideoUrl] = useState(
-        "http://172.18.78.197:3001/videos/how_to_sleep_1736658573062.mp4"
-    );
+    const [videoUrls, setVideoUrls] = useState([
+        "http://172.18.78.197:3001/videos/how_to_sleep_1736658573062.mp4",
+        "http://172.18.78.197:3001/videos/default_1736662432850.mp4",
+        "http://172.18.78.197:3001/videos/how_to_make_money_1736658244069.mp4",
+        "http://172.18.78.197:3001/videos/how_to_sleep_1736658299873.mp4",
+    ]);
+    const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(true);
 
@@ -18,13 +22,30 @@ function BloomScroll() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ prompt: prompt }),
+            body: JSON.stringify({ prompt: prompt, useAppPexel: false }),
         })
             .then((response) => response.json())
             .then((data) => {
                 console.log("Success:", data);
                 console.log("Video URL:", data.videoUrls[0]);
-                setVideoUrl(data.videoUrls[0]);
+                setVideoUrls([...videoUrls, data.videoUrls[0]]);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+
+        fetch("http://172.18.78.197:3001/generate-video", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: prompt, useAppPexel: true }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+                console.log("Video URL:", data.videoUrls[0]);
+                setVideoUrls([...videoUrls, data.videoUrls[0]]);
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -44,7 +65,7 @@ function BloomScroll() {
 
     return (
         <div className="z-20 flex flex-col items-center justify-center mt-12 ">
-            {!videoUrl && (
+            {!videoUrls && (
                 <>
                     <h2 className="text-[#faeed7] text-2xl font-bold mb-4">
                         Feed Content
@@ -54,11 +75,11 @@ function BloomScroll() {
                     </p>
                 </>
             )}
-            {videoUrl && (
+            {videoUrls && (
                 <div className="relative overflow-hidden">
                     <video
                         ref={videoRef}
-                        src={videoUrl}
+                        src={videoUrls[currentVideoIndex]}
                         autoPlay
                         muted
                         loop
