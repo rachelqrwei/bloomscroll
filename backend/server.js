@@ -8,6 +8,9 @@ const fs = require("fs");
 const app = express();
 const port = 3001;
 
+const userRoutes = require("./routes/user");
+// const videoRoutes = require("./routes/video");
+
 // Enable CORS with more permissive options
 app.use(
     cors({
@@ -21,6 +24,9 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/user", userRoutes);
+// app.use("/video", videoRoutes);
 
 // Create videos directory if it doesn't exist
 const videosDir = path.join(__dirname, "videos");
