@@ -106,8 +106,13 @@ const BloomPetal = React.forwardRef(
 
         const toggleExpand = () => {
             if (videoRef.current) {
-                videoRef.current.pause();
-                setIsPlaying(false);
+                if (isExpanded) {
+                    videoRef.current.pause();
+                    setIsPlaying(false);
+                } else {
+                    videoRef.current.play();
+                    setIsPlaying(true);
+                }
             }
             setIsExpanded((prev) => !prev);
         };
