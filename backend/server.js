@@ -56,8 +56,9 @@ app.post("/generate-video", async (req, res) => {
     try {
         const venv = path.join(__dirname, "videoGen", ".venv", "bin", "python");
         const { prompt, useAppPexel } = req.body;
-        const scriptName =
-            /*useAppPexel ? "app_pexel.py" :*/ " -m videoGen.app_brainrot";
+        const scriptName = ` -m videoGen.${
+            useAppPexel ? "app_pexel" : "app_brainrot"
+        }`;
         const filename = `${prompt.replace(/\s+/g, "_")}_${Date.now()}.mp4`;
         const outputFilename = path.join(videosDir, filename);
         const command = `${venv} ${scriptName} "${prompt}" "${outputFilename}"`;
